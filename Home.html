@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentification Sécurisée - LSPD/BCSO</title>
+    <style>
+        :root {
+            --police-blue: #1a2a44;
+            --police-gold: #c5a059;
+            --dark-bg: #0f172a;
+            --input-bg: #1e293b;
+            --text-color: #e2e8f0;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0;
+            background: linear-gradient(135deg, #020c1b 0%, #1a2a44 100%);
+            color: var(--text-color);
+        }
+
+        .login-container {
+            position: relative;
+            width: 350px;
+        }
+
+        /* Effet de brillance derrière la carte */
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -5px; left: -5px; right: -5px; bottom: -5px;
+            background: linear-gradient(45deg, var(--police-blue), var(--police-gold));
+            z-index: -1;
+            filter: blur(20px);
+            opacity: 0.5;
+            border-radius: 12px;
+        }
+
+        .login-card { 
+            background: rgba(30, 41, 59, 0.95); 
+            padding: 2.5rem; 
+            border-radius: 8px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
+            border-top: 4px solid var(--police-gold);
+            text-align: center;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .sub-text {
+            color: var(--police-gold);
+            font-size: 0.8rem;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            color: #94a3b8;
+        }
+
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            background-color: var(--input-bg);
+            border: 1px solid #334155; 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+            color: white;
+            transition: 0.3s;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--police-gold);
+            box-shadow: 0 0 0 2px rgba(197, 160, 89, 0.2);
+        }
+
+        button { 
+            width: 100%; 
+            padding: 12px; 
+            background-color: var(--police-blue); 
+            color: white; 
+            border: 1px solid var(--police-blue);
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        button:hover { 
+            background-color: var(--police-gold);
+            border-color: var(--police-gold);
+            color: #0f172a;
+        }
+
+        #message { 
+            height: 20px;
+            color: #ef4444; 
+            margin-top: 15px; 
+            font-size: 0.85rem; 
+        }
+
+        .footer-note {
+            margin-top: 20px;
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <div class="login-card">
+        <div class="logo-text">System Access</div>
+        <div class="sub-text">Inspection Générale - LSPD/BCSO</div>
+
+        <div class="input-group">
+            <label for="matricule">MATRICULE AGENT</label>
+            <input type="text" id="matricule" placeholder="Ex: 88">
+        </div>
+
+        <div class="input-group">
+            <label for="password">CODE D'ACCÈS</label>
+            <input type="password" id="password" placeholder="••••••">
+        </div>
+
+        <button onclick="verifierConnexion()">Accéder au Terminal</button>
+        
+        <p id="message"></p>
+
+        <div class="footer-note">
+            ⚠️ L'accès non autorisé est passible de poursuites fédérales. <br>IP Logged.
+        </div>
+    </div>
+</div>
+
+<script>
+    function verifierConnexion() {
+        // Récupération des valeurs
+        const id = document.getElementById('matricule').value;
+        const mdp = document.getElementById('password').value;
+        const message = document.getElementById('message');
+
+        // Animation visuelle simple pour feedback
+        message.innerText = "Vérification en cours...";
+        message.style.color = "#94a3b8"; // Gris pendant la vérif
+
+        setTimeout(() => {
+            // Vérification de la règle : Mot de passe = ID + ".22"
+            if (id !== "" && mdp === id + ".22") {
+                message.style.color = "#22c55e"; // Vert
+                message.innerText = "Accès autorisé. Redirection...";
+                
+                // Redirection vers le fichier intranet créé précédemment
+                setTimeout(() => {
+                    window.location.href = "page_privee.html"; 
+                }, 1000); // Petite pause pour l'effet réaliste
+                
+            } else {
+                message.style.color = "#ef4444"; // Rouge
+                message.innerText = "ERREUR : Identifiants invalides.";
+                
+                // Effet "secousse" sur le mot de passe (visuel)
+                document.getElementById('password').style.borderColor = "#ef4444";
+                setTimeout(() => {
+                    document.getElementById('password').style.borderColor = "#334155";
+                }, 2000);
+            }
+        }, 800); // Délai artificiel pour faire "vrai" chargement
+    }
+    
+    // Permet de valider avec la touche Entrée
+    document.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            verifierConnexion();
+        }
+    });
+</script>
+
+</body>
+</html>
