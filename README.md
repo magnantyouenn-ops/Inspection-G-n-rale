@@ -1,1 +1,1 @@
-# Inspection-G-n-rale
+# Inspection-Générale
